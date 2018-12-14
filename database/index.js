@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/fetcher');
+mongoose.Promise = require('bluebird');
+mongoose.connect('mongodb://localhost/fetcher', { useMongoClient: true });
 
 var db = mongoose.connection;
 db.on('error', () => console.log('Error establishing mongo db connectin.'));
@@ -21,15 +22,15 @@ const parseGitRepoInfo = (err, repos) => {
   if (err) {
     console.log('Git Repo parser received error.');
   } else {
-    console.log('Keys of the response repo objects: ' + Object.keys(repos));
+    // console.log('Keys of the response repo objects: ' + Object.keys(repos));
     repos.data.map(repo => {
 
-      if (repo['id']) console.log('repo id', repo.id);
-      if (repo['name']) console.log('repo id', repo.name);
-      if (repo['url']) console.log('repo id', repo.url);
-      if (repo['description']) console.log('repo id', repo.description);
-      if (repo['owner'] && repo.owner['id']) console.log('repo owner id', repo.owner.id);
-      if (repo['owner'] && repo.owner['login']) console.log('repo owner', repo.owner.login);
+      // if (repo['id']) console.log('repo id', repo.id);
+      // if (repo['name']) console.log('repo id', repo.name);
+      // if (repo['url']) console.log('repo id', repo.url);
+      // if (repo['description']) console.log('repo id', repo.description);
+      // if (repo['owner'] && repo.owner['id']) console.log('repo owner id', repo.owner.id);
+      // if (repo['owner'] && repo.owner['login']) console.log('repo owner', repo.owner.login);
 
       let keeper = {
         id: repo.id,

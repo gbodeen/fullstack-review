@@ -8,14 +8,31 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      repos: []
+      repos: [],
+      gotInitialData: false
     }
 
+    this.getRepos = this.getRepos.bind(this);
+  }
+
+  componentDidMount() {
+    this.getRepos();
+  }
+
+  getRepos() {
+    fetch('/repos')
+      .then(res => res.json())
+      .then(json => {
+        // console.log(json);
+        this.setState({ repos: json });
+      })
+      .catch(err => console.log('error getting repos', err));
   }
 
   search(term) {
-    console.log(`${term} was searched`);
-    fetch('/repos', { method: 'POST', body: term });
+    // console.log(`${term} was searched`);
+    fetch('/repos', { method: 'POST', body: term })
+      .then(() => this.getRepos());
   }
 
   render() {
@@ -28,3 +45,4 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));
+
