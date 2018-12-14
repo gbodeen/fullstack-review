@@ -17,13 +17,48 @@ let repoSchema = new mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (upsertablestuff) => {
-  // const upsertable = {'id': 1, 'name': 'X', 'owner': 'X', 'ownerid': 1, 'url':'X', 'description':'X'};
-  Repo.update({ 'id': id }, upsertablestuff, { 'upsert': true })
+const parseGitRepoInfo = (err, repos) => {
+  if (err) {
+    console.log('Git Repo parser received error.');
+  } else {
+    console.log('Keys of the response repo objects: ' + Object.keys(repos));
+    repos.data.map(repo => {
+
+      if (repo['id']) console.log('repo id', repo.id);
+      if (repo['name']) console.log('repo id', repo.name);
+      if (repo['url']) console.log('repo id', repo.url);
+      if (repo['description']) console.log('repo id', repo.description);
+      if (repo['owner'] && repo.owner['id']) console.log('repo owner id', repo.owner.id);
+      if (repo['owner'] && repo.owner['login']) console.log('repo owner', repo.owner.login);
+
+      let keeper = {
+        id: repo.id,
+        name: repo.name,
+        owner: repo.owner.login,
+        ownerid: repo.owner.id,
+        url: repo.url,
+        description: repo.description
+      };
+
+      // console.log('The latest keeper is: ', keeper);
+      save(keeper);
+    });
+  }
 }
 
-let retrieve = () => {
+const save = (upsertablestuff) => {
+  // const upsertable = {'id': 1, 'name': 'X', 'owner': 'X', 'ownerid': 1, 'url':'X', 'description':'X'};
+  Repo.update({ 'id': upsertablestuff.id }, upsertablestuff, { 'upsert': true }).exec()
+    .then(raw => console.log('Update DB results: ' + raw))
+    .catch(err => console.log('Update DB error: ' + err));
+}
+
+const retrieve = () => {
   Repo.find();
 }
 
-module.exports.save = save;
+module.exports = {
+  save: save,
+  retrieve: retrieve,
+  parseGitRepoInfo: parseGitRepoInfo
+};

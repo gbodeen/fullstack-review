@@ -2,6 +2,7 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const app = express();
 const { getReposByUsername } = require('../helpers/github.js');
+const { parseGitRepoInfo } = require('../database/index.js');
 
 app.use(express.static(__dirname + '/../client/dist'));
 
@@ -11,7 +12,7 @@ app.post('/repos', bodyparser.text(), function (req, res) {
   // and get the repo information from the github API, then
   // save the repo information in the database
   console.log('POSTed username is ' + req.body);
-  getReposByUsername(req.body);
+  getReposByUsername(req.body, parseGitRepoInfo);
   res.sendStatus(201);
 });
 
