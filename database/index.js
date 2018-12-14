@@ -17,9 +17,13 @@ let repoSchema = new mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (/* TODO */) => {
+let save = (upsertablestuff) => {
   // const upsertable = {'id': 1, 'name': 'X', 'owner': 'X', 'ownerid': 1, 'url':'X', 'description':'X'};
-  Repo.update({ 'id': id }, {}, { 'upsert': true })
+  Repo.update({ 'id': id }, upsertablestuff, { 'upsert': true })
+}
+
+let retrieve = () => {
+  Repo.find();
 }
 
 module.exports.save = save;
