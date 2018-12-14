@@ -12,8 +12,7 @@ app.post('/repos', bodyparser.text(), function (req, res) {
   // and get the repo information from the github API, then
   // save the repo information in the database
   console.log('POSTed username is ' + req.body);
-  getReposByUsername(req.body, parseGitRepoInfo);
-  res.sendStatus(201);
+  getReposByUsername(req.body, res, parseGitRepoInfo);
 });
 
 app.get('/repos', function (req, res) {

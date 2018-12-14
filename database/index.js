@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
+const Promise = require('bluebird');
+mongoose.Promise = Promise;
 mongoose.connect('mongodb://localhost/fetcher', { useMongoClient: true });
 
 var db = mongoose.connection;
@@ -18,39 +19,45 @@ let repoSchema = new mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-const parseGitRepoInfo = (err, repos) => {
+const parseGitRepoInfo = (err, repos, res) => {
   if (err) {
     console.log('Git Repo parser received error.');
   } else {
     // console.log('Keys of the response repo objects: ' + Object.keys(repos));
-    repos.data.map(repo => {
+    Promise.all(
+      repos.data.map(repo => {
 
-      // if (repo['id']) console.log('repo id', repo.id);
-      // if (repo['name']) console.log('repo id', repo.name);
-      // if (repo['url']) console.log('repo id', repo.url);
-      // if (repo['description']) console.log('repo id', repo.description);
-      // if (repo['owner'] && repo.owner['id']) console.log('repo owner id', repo.owner.id);
-      // if (repo['owner'] && repo.owner['login']) console.log('repo owner', repo.owner.login);
+        // if (repo['id']) console.log('repo id', repo.id);
+        // if (repo['name']) console.log('repo id', repo.name);
+        // if (repo['url']) console.log('repo id', repo.url);
+        // if (repo['description']) console.log('repo id', repo.description);
+        // if (repo['owner'] && repo.owner['id']) console.log('repo owner id', repo.owner.id);
+        // if (repo['owner'] && repo.owner['login']) console.log('repo owner', repo.owner.login);
 
-      let keeper = {
-        id: repo.id,
-        name: repo.name,
-        owner: repo.owner.login,
-        ownerid: repo.owner.id,
-        url: repo.url,
-        description: repo.description
-      };
+        let keeper = {
+          id: repo.id,
+          name: repo.name,
+          owner: repo.owner.login,
+          ownerid: repo.owner.id,
+          url: repo.url,
+          description: repo.description
+        };
 
-      // console.log('The latest keeper is: ', keeper);
-      save(keeper);
-    });
+        // console.log('The latest keeper is: ', keeper);
+        return save(keeper);
+      })
+    )
+      .then(() => res.send(201))
+      .catch(() => console.log('at least one error writing to the db'));
   }
 }
 
 const save = (upsertablestuff) => {
   // const upsertable = {'id': 1, 'name': 'X', 'owner': 'X', 'ownerid': 1, 'url':'X', 'description':'X'};
-  Repo.update({ 'id': upsertablestuff.id }, upsertablestuff, { 'upsert': true }).exec()
-    .then(raw => console.log('Update DB results: ' + raw))
+  return Repo.update({ 'id': upsertablestuff.id }, upsertablestuff, { 'upsert': true }).exec()
+    .then(raw => {
+      console.log('Update DB results: ' + raw);
+    })
     .catch(err => console.log('Update DB error: ' + err));
 }
 

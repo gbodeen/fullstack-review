@@ -3,7 +3,7 @@ const config = require('../config.js');
 const axios = require('axios');
 const fs = require('fs');
 
-let getReposByUsername = (username, cb) => {
+let getReposByUsername = (username, lastResponse, cb) => {
   // TODO - Use the request module to request repos for a specific
   // user from the github API
   axios({
@@ -18,7 +18,7 @@ let getReposByUsername = (username, cb) => {
       'Content-Type': 'application/json; charset=utf-8'
     }
   })
-    .then(res => {
+    .then(results => {
       console.log('axios github response received.');
       // // console.log('the response starts off: ', typeof res);
       // // console.log(res);
@@ -28,7 +28,7 @@ let getReposByUsername = (username, cb) => {
       // fs.writeFile(__dirname + '/fromgithub.txt', JSON.stringify(res.data), (err) => {
       //   if (err) console.log('writefile error', err);
       // });
-      cb(null, res);
+      cb(null, results, lastResponse);
     })
     .catch(err => {
       // fs.writeFile(__dirname + '/fromgithubERR.txt', 'testing2 \n' + JSON.stringify(err), (writeErr) => {
