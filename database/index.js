@@ -53,8 +53,10 @@ const save = (upsertablestuff) => {
     .catch(err => console.log('Update DB error: ' + err));
 }
 
-const retrieve = () => {
-  Repo.find();
+const retrieve = (cb) => {
+  Repo.find().exec()
+    .then(results => cb(null, results))
+    .catch(err => console.log(err));
 }
 
 module.exports = {

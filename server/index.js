@@ -2,7 +2,7 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const app = express();
 const { getReposByUsername } = require('../helpers/github.js');
-const { parseGitRepoInfo } = require('../database/index.js');
+const { parseGitRepoInfo, retrieve } = require('../database/index.js');
 
 app.use(express.static(__dirname + '/../client/dist'));
 
@@ -19,7 +19,9 @@ app.post('/repos', bodyparser.text(), function (req, res) {
 app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
-
+  retrieve((err, results) => {
+    res.send(results);
+  });
 });
 
 let port = 1128;
