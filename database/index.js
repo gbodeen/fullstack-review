@@ -18,9 +18,8 @@ let repoSchema = new mongoose.Schema({
 let Repo = mongoose.model('Repo', repoSchema);
 
 let save = (/* TODO */) => {
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
+  // const upsertable = {'id': 1, 'name': 'X', 'owner': 'X', 'ownerid': 1, 'url':'X', 'description':'X'};
+  Repo.update({ 'id': id }, {}, { 'upsert': true })
 }
 
 module.exports.save = save;
