@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
-// const Promise = require('bluebird');
 mongoose.Promise = global.Promise;
-
-
-
 mongoose.connect('mongodb://localhost/fetcher', { useMongoClient: true });
-
 const Repo = mongoose.model('repo', require('./schema'));
 
 const saveNewRepos = async (arrayOfRepos) => {
