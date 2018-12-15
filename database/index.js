@@ -62,7 +62,7 @@ const save = (upsertablestuff) => {
 }
 
 const retrieve = (cb) => {
-  Repo.find().exec()
+  Repo.find({}, [], { limit: 10, sort: { owner: 1, id: 1 } }).exec()
     .then(results => cb(null, results))
     .catch(err => console.log(err));
 }
